@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.flowtesting
 
 import org.junit.Test
 
