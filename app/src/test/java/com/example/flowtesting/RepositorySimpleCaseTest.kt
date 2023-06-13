@@ -30,7 +30,7 @@ class RepositorySimpleCaseTest {
     @TestCaseName("[{index}] {method}")
     @Parameters(method = "provideIndexes")
     @Test
-    fun `not flaky -- failing simple case`(iteration: Int) {
+    fun `no waiting -- not passing, not flaky`(iteration: Int) {
         runTest {
 
             val sut = createRepository(
@@ -55,7 +55,7 @@ class RepositorySimpleCaseTest {
     @TestCaseName("[{index}] {method}")
     @Parameters(method = "provideIndexes")
     @Test
-    fun `not flaky -- failing simple case using advanceUntilIdle`(iteration: Int) {
+    fun `using advanceUntilIdle -- not passing, not flaky`(iteration: Int) {
         runTest {
 
             val sut = createRepository(
@@ -81,7 +81,7 @@ class RepositorySimpleCaseTest {
     @TestCaseName("[{index}] {method}")
     @Parameters(method = "provideIndexes")
     @Test
-    fun `not flaky -- succeeding simple case using instant OkHttpDispatcher`(iteration: Int) {
+    fun `using instant OkHttpDispatcher -- passing, not flaky`(iteration: Int) {
         runTest {
 
             val sut = createRepository(
@@ -107,7 +107,7 @@ class RepositorySimpleCaseTest {
     @TestCaseName("[{index}] {method}")
     @Parameters(method = "provideIndexes")
     @Test
-    fun `flaky -- succeeding simple case using Thread#sleep but not instant OkHttpDispatcher`(iteration: Int) {
+    fun `using Thread#sleep but not instant OkHttpDispatcher -- flaky`(iteration: Int) {
         runTest {
 
             val sut = createRepository(
