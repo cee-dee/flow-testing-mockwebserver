@@ -6,8 +6,7 @@ import com.example.flowtesting.Repository
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.*
 
 fun createRepository(
     mockWebServerUrl: String,
@@ -22,9 +21,11 @@ fun createRepository(
 fun createSucceedingStubBackedRepository(): Repository {
     val dataService = mock(DataService::class.java)
     runBlocking {
-        `when`(dataService.loadData(anyString())).thenReturn(
+        doAnswer {
+            Thread.sleep(50)
             Data("value1")
-        )
+        }
+            .`when`(dataService).loadData(anyString())
     }
     return Repository(
         dataService = dataService,
@@ -35,7 +36,11 @@ fun createSucceedingStubBackedRepository(): Repository {
 fun createFailingStubBackedRepository(): Repository {
     val dataService = mock(DataService::class.java)
     runBlocking {
-        `when`(dataService.loadData(anyString())).thenThrow(RuntimeException::class.java)
+        doAnswer {
+            Thread.sleep(50)
+            throw RuntimeException()
+        }
+            .`when`(dataService).loadData(anyString())
     }
     return Repository(
         dataService = dataService,

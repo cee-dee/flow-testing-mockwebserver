@@ -43,7 +43,7 @@ class RepositorySimpleCaseWithMockitoTest {
     @TestCaseName("[{index}] {method}")
     @Parameters(method = "provideIndexes")
     @Test
-    fun `not flaky -- succeeding connect exception case`(iteration: Int) {
+    fun `not flaky -- succeeding exception case`(iteration: Int) {
         runTest {
 
             val sut = createFailingStubBackedRepository()
