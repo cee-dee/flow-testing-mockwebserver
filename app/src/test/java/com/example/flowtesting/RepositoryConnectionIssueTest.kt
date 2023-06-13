@@ -30,7 +30,7 @@ class RepositoryConnectionIssueTest {
     @TestCaseName("[{index}] {method}")
     @Parameters(method = "provideIndexes")
     @Test
-    fun `not flaky -- verify failure result due to connection error fails using plain FlowTurbine`(iteration: Int) {
+    fun `no waiting -- not passing, not flaky`(iteration: Int) {
         mockWebServer.start()
         mockWebServer.shutdown()
         runTest {
@@ -49,7 +49,7 @@ class RepositoryConnectionIssueTest {
     @TestCaseName("[{index}] {method}")
     @Parameters(method = "provideIndexes")
     @Test
-    fun `not flaky -- verify failure result due to connection error succeeds using Thread#sleep(50)`(iteration: Int) {
+    fun `using advanceUntilIdle -- not passing, not flaky`(iteration: Int) {
         mockWebServer.start()
         mockWebServer.shutdown()
         runTest {
@@ -59,7 +59,7 @@ class RepositoryConnectionIssueTest {
             sut.select(selector)
 
             sut.data.test {
-                Thread.sleep(50)
+                testScheduler.advanceUntilIdle()
                 val item = awaitItem()
                 verifyFailingDueToConnectionIssue(item)
             }
@@ -69,7 +69,7 @@ class RepositoryConnectionIssueTest {
     @TestCaseName("[{index}] {method}")
     @Parameters(method = "provideIndexes")
     @Test
-    fun `flaky -- verify failure result due to connection error succeeds using Thread#sleep(1)`(iteration: Int) {
+    fun `using Thread#sleep(1) -- flaky`(iteration: Int) {
         mockWebServer.start()
         mockWebServer.shutdown()
         runTest {
@@ -86,30 +86,10 @@ class RepositoryConnectionIssueTest {
         }
     }
 
-    @TestCaseName("[{index}] {method}")
-    @Parameters(method = "provideIndexes")
-    @Test
-    fun `not flaky -- verify failure result due to connection error fails using advanceUntilIdle`(iteration: Int) {
-        mockWebServer.start()
-        mockWebServer.shutdown()
-        runTest {
-
-            val sut = createRepository(mockWebServer.url)
-
-            sut.select(selector)
-
-            sut.data.test {
-                testScheduler.advanceUntilIdle()
-                val item = awaitItem()
-                verifyFailingDueToConnectionIssue(item)
-            }
-        }
-    }
-
     @Test
     @TestCaseName("[{index}] {method}")
     @Parameters(method = "provideIndexes")
-    fun `flaky -- verify failure result due to connection error using instant OkHttp dispatcher and advanceUntilIdle`(iteration: Int) {
+    fun `using instant OkHttp dispatcher and advanceUntilIdle -- flaky`(iteration: Int) {
         mockWebServer.start()
         mockWebServer.shutdown()
         runTest {
@@ -123,6 +103,26 @@ class RepositoryConnectionIssueTest {
 
             sut.data.test {
                 testScheduler.advanceUntilIdle()
+                val item = awaitItem()
+                verifyFailingDueToConnectionIssue(item)
+            }
+        }
+    }
+
+    @TestCaseName("[{index}] {method}")
+    @Parameters(method = "provideIndexes")
+    @Test
+    fun `using Thread#sleep(50) -- passing, not flaky`(iteration: Int) {
+        mockWebServer.start()
+        mockWebServer.shutdown()
+        runTest {
+
+            val sut = createRepository(mockWebServer.url)
+
+            sut.select(selector)
+
+            sut.data.test {
+                Thread.sleep(50)
                 val item = awaitItem()
                 verifyFailingDueToConnectionIssue(item)
             }
